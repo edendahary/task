@@ -1,0 +1,19 @@
+.list-group {
+  cursor: grab;
+}
+
+.list-group.drag-over {
+  border: 2px dashed #007bff;
+}
+.btn-danger-delete-mark {
+  border: none;
+  background: none;
+  color: red;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-danger-delete-mark:hover {
+  color: darkred;
+}

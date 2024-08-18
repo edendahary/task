@@ -1,0 +1,252 @@
+<div class="container mb-5 pt-5">
+  <div class="card" style="background-color: #cfcfcf">
+    <div class="card-header bg-primary">
+      <div class="row">
+        <div class="col-md-12 text-center p-3" style="font-weight: bold">
+          Products
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-2 fw-bold">Date</div>
+        <div class="col-2 fw-bold">Image</div>
+        <div class="col-2 fw-bold">Name</div>
+        <div class="col-2 fw-bold">Price</div>
+        <div class="col-4 fw-bold">Description</div>
+      </div>
+      <div class="row">
+        @for (item of list; track $index) {
+        <div
+          class="list-group p-2 border border-dark mb-3"
+          draggable="true"
+          (dragstart)="onDragStart($event, $index)"
+          (dragover)="onDragOver($event)"
+          (drop)="onDrop($event, $index)"
+        >
+          <div class="row">
+            <div class="col-2">
+              {{ item.date }}
+            </div>
+            <div
+              class="col-2 overflow-hidden text-nowrap text-truncate"
+              style="font-weight: bold"
+              [title]="item.name"
+            >
+              <img
+                [ngSrc]="'http://localhost:3000/uploads/images/' + item.image"
+                fill
+                priority
+                alt="Iphone Icon"
+                class="img-fluid mx-md-1"
+                style="max-width: 50px; max-height: 50px; position: relative"
+              />
+            </div>
+            <div
+              class="col-2 overflow-hidden text-nowrap text-truncate"
+              style="font-weight: bold"
+              [title]="item.name"
+            >
+              {{ item.name }}
+            </div>
+            <div
+              class="col-2 overflow-hidden text-nowrap text-truncate"
+              style="font-weight: bold"
+              [title]="item.price"
+            >
+              {{ item.price }}
+            </div>
+            <div
+              class="col-3 text-nowrap text-truncate"
+              style="font-weight: bold"
+              [title]="item.description"
+            >
+              {{ item.description }}
+            </div>
+              @if (isUserLoggedIn) {
+            <div class="col-1 text-end">
+              <div class="row">
+                <button
+                  type="button"
+                  class="btn-danger-delete-mark"
+                  (click)="removeItem(item!._id)"
+                  aria-label="Remove item"
+                >
+                  &times;
+                </button>
+              </div>
+              <div class="row">
+                <button type="button" class="btn p-0" (click)="updateModal(item)" title="Update">
+                  <img
+                    ngSrc="../../assets/images/refresh-icon.png"
+                    width="10"
+                    height="10"
+                    alt="Update Icon"
+                  />
+                </button>
+              </div>
+            </div>
+          }
+          </div>
+        </div>
+
+        }
+      </div>
+    </div>
+    @if (isUserLoggedIn) {
+    <div class="row">
+      <div class="col-12 text-center p-3">
+        <button class="btn btn-outline-success" (click)="openModal()">
+          Add new Item
+        </button>
+      </div>
+    </div>
+
+    }
+  </div>
+</div>
+
+<div class="modal" id="myModal" #myModal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h4 class="modal-title">Create New Item</h4>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="closeModel()"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <form ngNativeValidate #form>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="">Date</label>
+              <input
+                type="date"
+                [(ngModel)]="ItemObj.date"
+                name="date"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="">Name</label>
+              <input
+                type="text"
+                [(ngModel)]="ItemObj.name"
+                name="name"
+                placeholder="Enter Name"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 p-2">
+              <label for="">Image</label>
+              <input
+                type="file"
+                #fileInput
+                name="image"
+                accept="image/*"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 p-2">
+              <label for="">Price</label>
+              <input
+                type="tel"
+                [(ngModel)]="ItemObj.price"
+                name="price"
+                placeholder="Enter price"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 p-2">
+              <label for="">Description</label>
+              <input
+                type="tel"
+                [(ngModel)]="ItemObj.description"
+                name="description"
+                placeholder="Enter Description"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="closeModel()">
+          Close
+        </button>
+        @if (!this.updateItem) {
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="
+            form.checkValidity()
+              ? saveItem(fileInput.files![0])
+              : errorMessage()
+          "
+        >
+          Save Item
+        </button>
+        }@else {
+          <button
+          type="button"
+          class="btn btn-primary"
+          (click)="
+            form.checkValidity()
+              ? saveItem(fileInput.files![0])
+              : errorMessage()
+          "
+        >
+          Update Item
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="modelError" #modelError style="margin-top: 150px">
+  <div class="modal-dialog text-center">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Message</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="closeError()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        {{ Message }}
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+          (click)="closeError()"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
